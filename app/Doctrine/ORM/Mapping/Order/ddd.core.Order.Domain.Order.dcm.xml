@@ -1,0 +1,24 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <entity name="ddd\core\Order\Domain\Order" table="orders">
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="clientId" column="client_id" type="integer" />
+
+        <embedded name="status" class="ddd\core\Order\Domain\OrderStatus" use-column-prefix="false" />
+
+        <one-to-many field="orderLines" target-entity="ddd\core\Order\Domain\OrderLine" mapped-by="order">
+            <cascade>
+                <cascade-all/>
+            </cascade>
+            <order-by>
+                <order-by-field name="id" direction="ASC"/>
+            </order-by>
+        </one-to-many>
+
+    </entity>
+</doctrine-mapping>

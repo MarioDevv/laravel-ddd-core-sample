@@ -2,61 +2,34 @@
 
 namespace App\Doctrine\Repository\Order;
 
-use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\Doctrine\Repository\DoctrineRepository;
 
 use ddd\core\Order\Domain\Contracts\OrderRepository;
 use ddd\core\Order\Domain\Order;
+use ddd\core\Order\Domain\OrderLine;
 
-class DoctrineOrderRepository implements OrderRepository
+class DoctrineOrderRepository extends DoctrineRepository implements OrderRepository
 {
-
-    private EntityRepository $serviceRepository;
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-        $this->serviceRepository = $entityManager->getRepository(Order::class);
-    }
 
     public function nextOrderIdentity(): int
     {
-        return $this->getNextIdFromDatabase('orders');
+        $lastOrder = $this->repository(Order::class)->findOneBy([], ['id' => 'DESC']);
+        return $lastOrder ? $lastOrder->id() + 1 : 1;
     }
 
     public function nextOrderLineIdentity(): int
     {
-        return $this->getNextIdFromDatabase('order_lines');
+        $lastOrderLine = $this->repository(OrderLine::class)->findOneBy([], ['id' => 'DESC']);
+        return $lastOrderLine ? $lastOrderLine->id() + 1 : 1;
     }
 
     public function findById(int $id): ?Order
     {
-        // TODO: Implement findById() method.
+        return $this->repository(Order::class)->find($id);
     }
 
-    public function persist(Order $order): void
+    public function save(Order $order): void
     {
-        // TODO: Implement persist() method.
+        $this->persist($order);
     }
-
-
-    private function getNextIdFromDatabase(string $tableName): int
-    {
-        $connection = $this->entityManager->getConnection();
-        $sql = 'SHOW TABLE STATUS LIKE :tableName';
-
-        $result = $connection->executeQuery($sql, [
-            'tableName' => $tableName
-        ])->fetchAssociative();
-
-        if ($result === false || !isset($result['Auto_increment'])) {
-            throw new \RuntimeException("Unable to retrieve the next ID for table: {$tableName}");
-        }
-
-        return (int) $result['Auto_increment'];
-    }
-
-
 }

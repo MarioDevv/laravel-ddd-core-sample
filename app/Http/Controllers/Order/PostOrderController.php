@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Order;
 
+use App\Doctrine\Repository\Order\DoctrineOrderRepository;
 use App\Http\Controllers\Controller;
 use ddd\core\Order\Application\Create\CreateOrderRequest;
 use ddd\core\Order\Application\Create\CreateOrder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
-class CreateOrderController extends Controller
+class PostOrderController extends Controller
 {
     private readonly CreateOrder $createOrder;
 
     public function __construct()
     {
-        $this->createOrder = new CreateOrder();
+        $this->createOrder = new CreateOrder(App::make(DoctrineOrderRepository::class));
     }
 
     public function __invoke(): JsonResponse
@@ -22,15 +24,17 @@ class CreateOrderController extends Controller
 
         try {
 
-
             $request = $this->randomOrderRequest();
 
-            $this->createOrder->__invoke($request);
+            $response = $this->createOrder->__invoke($request);
 
-           return response()->json('Order created successfully');
+           return response()->json([
+               'message' => 'Order created',
+               'order' => $response->json()
+           ], 201);
 
         } catch (\Throwable $th) {
-            Log::error('CreateOrderController: ' . $th->getMessage());
+            Log::error('PostOrderController: ' . $th->getMessage());
             return response()->json('Error while creating order');
         }
 
@@ -46,7 +50,7 @@ class CreateOrderController extends Controller
             $lines[] = [
                 'name' => 'Product ' . $i,
                 'quantity' => rand(1, 10),
-                'price' => rand(1, 100)
+                'price' => rand(500, 10000)
             ];
         }
 

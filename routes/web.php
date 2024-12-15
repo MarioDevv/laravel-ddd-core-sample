@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Order\CreateOrderController;
+use App\Http\Controllers\Order\PostOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -8,4 +8,4 @@ Route::get('/', function () {
 });
 
 
-Route::post('order', CreateOrderController::class)->name('order.create');
+Route::post('order', PostOrderController::class)->name('order.create');

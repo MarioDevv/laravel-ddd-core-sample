@@ -27,10 +27,10 @@ return [
     'managers'                   => [
         'default' => [
             'dev'           => env('APP_DEBUG', false),
-            'meta'          => env('DOCTRINE_METADATA', 'attributes'),
+            'meta'          => env('DOCTRINE_METADATA', 'xml'),
             'connection'    => env('DB_CONNECTION', 'mysql'),
             'paths'         => [
-                base_path('app/Doctrine/ORM/Entity'),
+                base_path('app/Doctrine/ORM/Mapping/Order'),
             ],
 
             'repository'    => Doctrine\ORM\EntityRepository::class,
