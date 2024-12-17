@@ -1,0 +1,32 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <entity name="ddd\core\Order\Domain\Order" table="orders">
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="clientId" column="client_id" type="integer"/>
+
+        <embedded name="status" class="ddd\core\Order\Domain\OrderStatus" use-column-prefix="false"/>
+
+
+        <many-to-many field="orderLines" target-entity="ddd\core\Order\Domain\OrderLine" fetch="EAGER"
+                      orphan-removal="true">
+            <cascade>
+                <cascade-all/>
+            </cascade>
+            <join-table name="order_order_lines_pivot">
+                <join-columns>
+                    <join-column name="order_id" referenced-column-name="id"/>
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="order_line_id" referenced-column-name="id"/>
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+
+
+    </entity>
+</doctrine-mapping>
