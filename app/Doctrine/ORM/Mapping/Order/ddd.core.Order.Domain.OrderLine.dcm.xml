@@ -3,13 +3,9 @@
 
     <entity name="ddd\core\Order\Domain\OrderLine" table="order_lines">
 
-        <id name="id" type="integer" column="id">
+        <id name="surrogateId" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
-
-        <many-to-one field="order" target-entity="ddd\core\Order\Domain\Order" inversed-by="orderLines">
-            <join-column name="order_id" referenced-column-name="id" nullable="false"/>
-        </many-to-one>
 
         <embedded name="name" class="ddd\core\Order\Domain\OrderLineName" use-column-prefix="false" />
 

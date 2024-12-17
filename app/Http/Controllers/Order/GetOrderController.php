@@ -24,7 +24,6 @@ class GetOrderController
 
         try {
 
-
             if (!$request->id) {
                 return response()->json('Id is required', 400);
             }
@@ -39,7 +38,7 @@ class GetOrderController
             ], 201);
 
         } catch (\Throwable $th) {
-            Log::error('GetOrderController: ' . $th->getMessage());
+            Log::error('GetOrderController: ' . $th->getMessage() . ' ' . $th->getFile() . ' ' . $th->getLine());
             return response()->json('Error while returning order');
         }
 
